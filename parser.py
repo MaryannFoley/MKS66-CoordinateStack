@@ -71,7 +71,7 @@ def parse_file( fname, edges, polygons, csystems, screen, color ):
     while c < len(lines):
         line = lines[c].strip()
         #print ':' + line + ':'
-
+        transform=csystems[-1]
         if line in ARG_COMMANDS:
             c+= 1
             args = lines[c].strip().split(' ')
@@ -80,10 +80,10 @@ def parse_file( fname, edges, polygons, csystems, screen, color ):
             copy =[a[:] for a in csystems[-1]]
             csystems.append(copy)
 
-        if line=="pop":
+        elif line=="pop":
             csystems.pop()
 
-        if line == 'sphere':
+        elif line == 'sphere':
             #print 'SPHERE\t' + str(args)
             add_sphere(polygons,
                        float(args[0]), float(args[1]), float(args[2]),
