@@ -67,6 +67,8 @@ def parse_file( fname, edges, polygons, csystems, screen, color ):
     step = 100
     step_3d = 20
 
+    temp=[]
+
     c = 0
     while c < len(lines):
         line = lines[c].strip()
@@ -85,43 +87,74 @@ def parse_file( fname, edges, polygons, csystems, screen, color ):
 
         elif line == 'sphere':
             #print 'SPHERE\t' + str(args)
-            add_sphere(polygons,
+            add_sphere(temp,
                        float(args[0]), float(args[1]), float(args[2]),
                        float(args[3]), step_3d)
+            matrix_mult(transform,temp)
+            for h in temp:
+                polygons.append(h)
+            draw_polygons(temp,screen,color)
+            temp=[]
+
+
 
         elif line == 'torus':
             #print 'TORUS\t' + str(args)
-            add_torus(polygons,
+            add_torus(temp,
                       float(args[0]), float(args[1]), float(args[2]),
                       float(args[3]), float(args[4]), step_3d)
+            matrix_mult(transform,temp)
+            for h in temp:
+                polygons.append(h)
+            draw_polygons(temp,screen,color)
+            temp=[]
 
         elif line == 'box':
             #print 'BOX\t' + str(args)
-            add_box(polygons,
+            add_box(temp,
                     float(args[0]), float(args[1]), float(args[2]),
                     float(args[3]), float(args[4]), float(args[5]))
+            matrix_mult(transform,temp)
+            for h in temp:
+                polygons.append(h)
+            draw_polygons(temp,screen,color)
+            temp=[]
 
         elif line == 'circle':
             #print 'CIRCLE\t' + str(args)
-            add_circle(edges,
+            add_circle(temp,
                        float(args[0]), float(args[1]), float(args[2]),
                        float(args[3]), step)
+            matrix_mult(transform,temp)
+            for h in temp:
+                polygons.append(h)
+            draw_lines(temp,screen,color)
+            temp=[]
 
         elif line == 'hermite' or line == 'bezier':
             #print 'curve\t' + line + ": " + str(args)
-            add_curve(edges,
+            add_curve(temp,
                       float(args[0]), float(args[1]),
                       float(args[2]), float(args[3]),
                       float(args[4]), float(args[5]),
                       float(args[6]), float(args[7]),
                       step, line)
+            matrix_mult(transform,temp)
+            draw_lines(temp,screen,color)
+            for h in temp:
+                polygons.append(h)
+            temp=[]
 
         elif line == 'line':
             #print 'LINE\t' + str(args)
 
-            add_edge( edges,
+            add_edge( temp,
                       float(args[0]), float(args[1]), float(args[2]),
                       float(args[3]), float(args[4]), float(args[5]) )
+            matrix_mult(transform,temp)
+            draw_lines(temp,screen,color)
+            edges.append(temp[0])
+            temp=[]
 
         elif line == 'scale':
             #print 'SCALE\t' + str(args)
@@ -157,6 +190,7 @@ def parse_file( fname, edges, polygons, csystems, screen, color ):
             polygons = []
 
         elif line == 'display' or line == 'save':
+            print(polygons)
             clear_screen(screen)
             draw_lines(edges, screen, color)
             draw_polygons(polygons, screen, color)
